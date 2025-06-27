@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         int[] nums1={2,4};
         int[] nums2={1,2,3,4};
-        System.out.println(Arrays.toString(nextGreaterElement(nums1,nums2)));
+        System.out.println(Arrays.toString(nextGreaterElementLC(nums1,nums2)));
 
         String ch="(){}}{";
         System.out.println(isValid(ch));
@@ -17,9 +17,18 @@ public class Main {
 
         String s1="(())((()))";
         System.out.println(removeOuterParentheses(s1));
+
+        String post = "a+b*(c^d-e)^(f+g*h)-i";
+        System.out.println(infixToPostfix(post));
+
+        String pre = "a+b";
+        System.out.println(infixToPrefix(pre));
+
+        int[] arr={4,12,5,3,1,2,5,3,1,2,4,6};
+        System.out.println(Arrays.toString(nextGreaterElement(arr)));
     }
 
-    static int[] nextGreaterElement(int[] nums1, int[] nums2) {
+    static int[] nextGreaterElementLC(int[] nums1, int[] nums2) {
         int[] ans=new int[nums1.length];
         for(int i=0;i<nums1.length;i++)
         {
@@ -118,5 +127,159 @@ public class Main {
     }
     return ans.toString();
     }
+
+    static String infixToPostfix(String st)
+    {
+        Stack<Character> stack = new Stack<>();
+        String ans = "";
+        char[] arr = st.toCharArray();
+        for (int i = 0; i < arr.length; i++)
+        {
+            if ((arr[i] >= 'A' && arr[i] <= 'Z')
+                    || (arr[i] >= 'a' && arr[i] <= 'z')
+                    || (arr[i] >= '0' && arr[i] <= '9'))
+            {
+                ans += arr[i];
+            }
+            else if (arr[i] == '(')
+            {
+                stack.push(arr[i]);
+            }
+            else if (arr[i] == ')')
+            {
+                while (!stack.isEmpty() && stack.peek() != '(')
+                {
+                    ans += stack.pop();
+                }
+                if (!stack.isEmpty() && stack.peek() == '(')
+                {
+                    stack.pop();
+                }
+                else
+                {
+                    return "Invalid Expression";
+                }
+            }
+            else
+            {
+                while (!stack.isEmpty() && (priority(arr[i]) <= priority(stack.peek())))
+                {
+                    if (stack.peek() == '(') break;
+                    ans += stack.pop();
+                }
+                stack.push(arr[i]);
+            }
+        }
+
+        while (!stack.isEmpty())
+        {
+            if (stack.peek() == '(')
+            {
+                return "Invalid Expression";
+            }
+            ans += stack.pop();
+        }
+        return ans;
+    }
+
+    static int priority(char c)
+    {
+        if (c == '^') return 3;
+        else if (c == '/' || c == '*') return 2;
+        else if (c == '+' || c == '-') return 1;
+        else return -1;
+    }
+
+    static String infixToPrefix(String st)
+    {
+        StringBuilder sb = new StringBuilder(st);
+        st=sb.reverse().toString();
+        Stack<Character> stack = new Stack<>();
+        String ans = "";
+        char[] arr = st.toCharArray();
+        for (int i = 0; i < arr.length; i++)
+        {
+            if ((arr[i] >= 'A' && arr[i] <= 'Z')
+                    || (arr[i] >= 'a' && arr[i] <= 'z')
+                    || (arr[i] >= '0' && arr[i] <= '9'))
+            {
+                ans += arr[i];
+            }
+            else if (arr[i] == '(')
+            {
+                stack.push(arr[i]);
+            }
+            else if (arr[i] == ')')
+            {
+                while (!stack.isEmpty() && stack.peek() != '(')
+                {
+                    ans += stack.pop();
+                }
+                if (!stack.isEmpty() && stack.peek() == '(')
+                {
+                    stack.pop();
+                }
+                else
+                {
+                    return "Invalid Expression";
+                }
+            }
+            else
+            {
+                while (!stack.isEmpty() && (priority(arr[i]) <= priority(stack.peek())))
+                {
+                    if (stack.peek() == '(') break;
+                    ans += stack.pop();
+                }
+                stack.push(arr[i]);
+            }
+        }
+
+        while (!stack.isEmpty())
+        {
+            if (stack.peek() == '(')
+            {
+                return "Invalid Expression";
+            }
+            ans += stack.pop();
+        }
+         return new StringBuilder(ans).reverse().toString();
+    }
+
+    static int[] nextGreaterElement(int[] arr)
+    {
+        Stack<Integer> stack =new Stack<>();
+        int[] ans= new int[arr.length];
+        for(int i= arr.length-1;i>=0;i--)
+        {
+            if(stack.isEmpty())
+            {
+                ans[i]=-1;
+                stack.push(arr[i]);
+            }
+            else if(stack.peek()>arr[i]){
+                ans[i]=stack.peek();
+                stack.push(arr[i]);
+            }
+            else
+            {
+                while((!stack.isEmpty()) && (stack.peek() <= arr[i]))
+                {
+                    stack.pop();
+                }
+                if(stack.isEmpty())
+                {
+                    ans[i]=-1;
+                }
+                else {
+                    ans[i] = stack.peek();
+                }
+                stack.push(arr[i]);
+            }
+        }
+        return ans;
+    }
+
+
 
 }
